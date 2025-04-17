@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+  /* scrollbar-width: none; 
+  -ms-overflow-style: none;  */
+}
+/* *::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+
+/* button
+blue- bg->#1170CD
+blue- hover->#0E5A8A
+blue- active->#0C4C74
+*/
+.box-shadow {
+  box-shadow: 0px 10px 30px 10px rgba(186, 213, 238, 0.5);
+}
