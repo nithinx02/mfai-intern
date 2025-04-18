@@ -220,63 +220,56 @@ const MockInterview = () => {
           </div>
 
           <div className="space-y-6">
-            {questions.map((question, index) => {
-              const userAnswer = answers[index] || "Not answered";
-              const isSkipped = userAnswer === "Skipped";
-              const isCorrect =
-                !isSkipped &&
-                evaluationResults.evaluation[index]?.includes("Correct");
+          {questions.map((question, index) => {
+    const userAnswer = answers[index] || "Not answered";
+    const isSkipped = userAnswer === "Skipped" || userAnswer === "Not answered";
+    const evaluationText = evaluationResults.evaluation[index] || "";
+    
+    // More flexible correctness checking
+const isCorrect = !isSkipped && (
+  /correct/i.test(evaluationText) ||
+  /similar/i.test(evaluationText) ||
+  /close enough/i.test(evaluationText) ||
+  /mostly right/i.test(evaluationText) ||
+  // Check answer similarity as fallback
+  (userAnswer.toLowerCase().includes(expectedAnswers[index].toLowerCase().split(' ')[0]) ||
+  expectedAnswers[index].toLowerCase().split(' ').some(word => 
+      userAnswer.toLowerCase().includes(word)))
+);
 
-              return (
-                <div
-                  key={index}
-                  className="border border-gray-200 rounded-lg p-4"
-                >
-                  <h3 className="text-xl font-semibold mb-2">
-                    Q{index + 1}: {question}
-                  </h3>
-                  <p className="mb-2">
-                    <strong>Your Answer:</strong> {userAnswer}
-                  </p>
-                  <p className="mb-2">
-                    <strong>Expected Answer:</strong> {expectedAnswers[index]}
-                  </p>
-                  <div
-                    className={`p-3 rounded ${
-                      isSkipped
-                        ? "bg-gray-100"
-                        : isCorrect
-                        ? "bg-green-100"
-                        : "bg-red-100"
-                    }`}
-                  >
-                    <p
-                      className={
-                        isSkipped
-                          ? "text-gray-700"
-                          : isCorrect
-                          ? "text-green-700"
-                          : "text-red-700"
-                      }
-                    >
-                      <strong>
-                        {isSkipped
-                          ? "↻ Skipped"
-                          : isCorrect
-                          ? "✓ Correct"
-                          : "✗ Wrong"}
-                      </strong>
-                    </p>
-                    {!isSkipped && (
-                      <p>
-                        {evaluationResults.evaluation[index] ||
-                          "No evaluation available"}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+    return (
+      <div key={index} className="border border-gray-200 rounded-lg p-4">
+          <h3 className="text-xl font-semibold mb-2">
+              Q{index + 1}: {question}
+          </h3>
+          <p className="mb-2">
+              <strong>Your Answer:</strong> {userAnswer}
+          </p>
+          <p className="mb-2">
+              <strong>Expected Answer:</strong> {expectedAnswers[index]}
+          </p>
+          <div className={`p-3 rounded ${
+              isSkipped ? "bg-gray-100" :
+              isCorrect ? "bg-green-100" : "bg-red-100"
+          }`}>
+              <p className={isSkipped ? "text-gray-700" : 
+                          isCorrect ? "text-green-700" : "text-red-700"}>
+                  <strong>
+                      {isSkipped ? "↻ Skipped" : 
+                      isCorrect ? "✓ Correct" : "✗ Wrong"}
+                  </strong>
+                  {isCorrect && !/correct/i.test(evaluationText) && (
+                      <span className="ml-2 text-sm">(Accepted as correct)</span>
+                  )}
+              </p>
+              {!isSkipped && (
+                  <p>{evaluationText.split('Evaluation:')[1]?.trim() || evaluationText}</p>
+              )}
+          </div>
+      </div>
+  );
+})}
+
           </div>
 
           <div className="mt-8 flex justify-center gap-4">

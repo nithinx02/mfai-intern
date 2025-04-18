@@ -96,7 +96,7 @@ function Login() {
                 className="text-[#1170CD] ml-1 cursor-pointer hover:text-[#0E5BAA] transition-all duration-300 text-sm"
                 onClick={() => navigate("/signup")}
               >
-                 Create an account
+                Create an account
               </span>
             </p>
           </div>
