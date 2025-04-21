@@ -7,7 +7,7 @@ import { jwtDecode } from "jwt-decode";
 const MockInterview = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { resumeText, jobRole, difficulty,score } = location.state || {};
+  const { resumeText, jobRole, difficulty, score } = location.state || {};
 
   const [showExitPopup, setShowExitPopup] = useState(false);
   const [questions, setQuestions] = useState([]);
@@ -17,11 +17,11 @@ const MockInterview = () => {
   const [timeLeft, setTimeLeft] = useState(900); // 15 minutes timer
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [skippedCount, setSkippedCount] = useState(0);
+
   const [evaluationResults, setEvaluationResults] = useState(null);
+  const [answerError, setAnswerError] = useState("");
 
   useEffect(() => {
-    // fetching questions ...
     const fetchQuestions = async () => {
       if (!resumeText || !jobRole || !difficulty) {
         navigate("/");
@@ -36,7 +36,7 @@ const MockInterview = () => {
         }
 
         const response = await fetch(
-          "https://airesumeproapi.onrender.com/api/mockinterview",
+          "http://localhost:5000/api/mockinterview",
           {
             method: "POST",
             headers: {
@@ -77,9 +77,25 @@ const MockInterview = () => {
 
   const handleAnswerChange = (e) => {
     setAnswers({ ...answers, [currentQuestionIndex]: e.target.value });
+    if (e.target.value.trim() && answerError) {
+      setAnswerError("");
+    }
+  };
+
+  const validateAnswer = () => {
+    const currentAnswer = answers[currentQuestionIndex] || "";
+    if (!currentAnswer.trim()) {
+      setAnswerError("Please enter your answer before proceeding");
+      return false;
+    }
+    return true;
   };
 
   const nextQuestion = () => {
+    if (!validateAnswer()) {
+      return;
+    }
+    
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
@@ -106,7 +122,7 @@ const MockInterview = () => {
   const handleCancelExit = () => {
     setShowExitPopup(false);
   };
-// evaluate answers ...
+
   const evaluateAnswers = async () => {
     setLoading(true);
     try {
@@ -120,7 +136,7 @@ const MockInterview = () => {
       const userEmail = decoded.email;
 
       const response = await fetch(
-        "https://airesumeproapi.onrender.com/api/evaluate-answers",
+        "http://localhost:5000/api/evaluate-answers",
         {
           method: "POST",
           headers: {
@@ -133,7 +149,7 @@ const MockInterview = () => {
             answers: Object.values(answers),
             expectedAnswers,
             jobRole,
-            skippedCount,
+          
             score
           }),
         }
@@ -144,7 +160,6 @@ const MockInterview = () => {
         throw new Error(result.error || "Failed to evaluate answers");
       }
 
-      // Ensure evaluation results have the correct structure
       const formattedResults = {
         correctCount: result.correctCount || 0,
         wrongCount: result.wrongCount || 0,
@@ -211,65 +226,54 @@ const MockInterview = () => {
                 {evaluationResults.wrongCount}
               </p>
             </div>
-            <div className="bg-yellow-100 p-4 rounded-lg text-center">
-              <h3 className="text-xl font-semibold">Skipped Questions</h3>
-              <p className="text-4xl font-bold text-yellow-600">
-                {skippedCount}
-              </p>
-            </div>
+  
           </div>
 
           <div className="space-y-6">
-          {questions.map((question, index) => {
-    const userAnswer = answers[index] || "Not answered";
-    const isSkipped = userAnswer === "Skipped" || userAnswer === "Not answered";
-    const evaluationText = evaluationResults.evaluation[index] || "";
-    
-    // More flexible correctness checking
-const isCorrect = !isSkipped && (
-  /correct/i.test(evaluationText) ||
-  /similar/i.test(evaluationText) ||
-  /close enough/i.test(evaluationText) ||
-  /mostly right/i.test(evaluationText) ||
-  // Check answer similarity as fallback
-  (userAnswer.toLowerCase().includes(expectedAnswers[index].toLowerCase().split(' ')[0]) ||
-  expectedAnswers[index].toLowerCase().split(' ').some(word => 
-      userAnswer.toLowerCase().includes(word)))
-);
+            {questions.map((question, index) => {
+              const userAnswer = answers[index] || "Not answered";
+              const isSkipped = userAnswer === "Skipped" || userAnswer === "Not answered";
+              const evaluationText = evaluationResults.evaluation[index] || "";
+              
+              const isCorrect = !isSkipped && (
+                /correct/i.test(evaluationText) ||
+                (userAnswer.toLowerCase().includes(expectedAnswers[index].toLowerCase().split(' ')[0]) ||
+                expectedAnswers[index].toLowerCase().split(' ').some(word => 
+                    userAnswer.toLowerCase().includes(word)))
+              );
 
-    return (
-      <div key={index} className="border border-gray-200 rounded-lg p-4">
-          <h3 className="text-xl font-semibold mb-2">
-              Q{index + 1}: {question}
-          </h3>
-          <p className="mb-2">
-              <strong>Your Answer:</strong> {userAnswer}
-          </p>
-          <p className="mb-2">
-              <strong>Expected Answer:</strong> {expectedAnswers[index]}
-          </p>
-          <div className={`p-3 rounded ${
-              isSkipped ? "bg-gray-100" :
-              isCorrect ? "bg-green-100" : "bg-red-100"
-          }`}>
-              <p className={isSkipped ? "text-gray-700" : 
-                          isCorrect ? "text-green-700" : "text-red-700"}>
-                  <strong>
-                      {isSkipped ? "↻ Skipped" : 
-                      isCorrect ? "✓ Correct" : "✗ Wrong"}
-                  </strong>
-                  {isCorrect && !/correct/i.test(evaluationText) && (
-                      <span className="ml-2 text-sm">(Accepted as correct)</span>
-                  )}
-              </p>
-              {!isSkipped && (
-                  <p>{evaluationText.split('Evaluation:')[1]?.trim() || evaluationText}</p>
-              )}
-          </div>
-      </div>
-  );
-})}
-
+              return (
+                <div key={index} className="border border-gray-200 rounded-lg p-4">
+                    <h3 className="text-xl font-semibold mb-2">
+                        Q{index + 1}: {question}
+                    </h3>
+                    <p className="mb-2">
+                        <strong>Your Answer:</strong> {userAnswer}
+                    </p>
+                    <p className="mb-2">
+                        <strong>Expected Answer:</strong> {expectedAnswers[index]}
+                    </p>
+                    <div className={`p-3 rounded ${
+                        isSkipped ? "bg-gray-100" :
+                        isCorrect ? "bg-green-100" : "bg-red-100"
+                    }`}>
+                        <p className={isSkipped ? "text-gray-700" : 
+                                    isCorrect ? "text-green-700" : "text-red-700"}>
+                            <strong>
+                                {isSkipped ? "↻ Skipped" : 
+                                isCorrect ? "✓ Correct" : "✗ Wrong"}
+                            </strong>
+                            {isCorrect && !/correct/i.test(evaluationText) && (
+                                <span className="ml-2 text-sm">(Accepted as correct)</span>
+                            )}
+                        </p>
+                        {!isSkipped && (
+                            <p>{evaluationText.split('Evaluation:')[1]?.trim() || evaluationText}</p>
+                        )}
+                    </div>
+                </div>
+              );
+            })}
           </div>
 
           <div className="mt-8 flex justify-center gap-4">
@@ -332,27 +336,17 @@ const isCorrect = !isSkipped && (
             <div className="my-4 shadow-xl p-4 rounded-2xl">
               <div className="flex justify-between items-center mb-4">
                 <p className="text-xl">Your Answer</p>
-                <Button
-                  className="px-6 py-2 hover:!bg-[#1170CD] hover:!text-white !bg-white !text-[#1170CD] border rounded w-fit transition"
-                  onClick={() => {
-                    setAnswers((prev) => ({
-                      ...prev,
-                      [currentQuestionIndex]: "Skipped",
-                    }));
-                    setSkippedCount((prev) => prev + 1);
-                    nextQuestion();
-                  }}
-                >
-                  Skip
-                </Button>
               </div>
               <textarea
-                className="w-full p-2 border border-gray-600 rounded-lg mb-4 focus:outline-none text-stone-600"
+                className="w-full p-2 border border-gray-600 rounded-lg mb-1 focus:outline-none text-stone-600"
                 placeholder="Type your answer here..."
                 rows="4"
                 value={answers[currentQuestionIndex] || ""}
                 onChange={handleAnswerChange}
               />
+              {answerError && (
+                <p className="text-red-500 text-sm mb-3">{answerError}</p>
+              )}
               <div className="flex justify-between">
                 <Button
                   className="px-4 py-2 bg-[#1170CD] text-white rounded-full max-md:px-6 disabled:opacity-50 max-md:text-sm"

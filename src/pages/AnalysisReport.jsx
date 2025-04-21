@@ -135,7 +135,7 @@ const ReportAnalysis = () => {
       }
 
       const response = await fetch(
-        "https://airesumeproapi.onrender.com/api/job-suggestions",
+        "http://localhost:5000/api/job-suggestions",
         {
           method: "POST",
           headers: {

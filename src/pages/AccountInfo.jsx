@@ -32,7 +32,7 @@ function AccountInfoPage() {
     setLoading(true);
     try {
       const res = await fetch(
-        "https://airesumeproapi.onrender.com/api/account-info",
+        "http://localhost:5000/api/account-info",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -60,7 +60,7 @@ function AccountInfoPage() {
     setLoading(true);
     try {
       const res = await fetch(
-        "https://airesumeproapi.onrender.com/api/get-profile-picture",
+        "http://localhost:5000/api/get-profile-picture",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -111,7 +111,7 @@ function AccountInfoPage() {
 
     try {
       const res = await fetch(
-        "https://airesumeproapi.onrender.com/api/update-account-info",
+        "http://localhost:5000/api/update-account-info",
         {
           method: "PUT",
           headers: {
@@ -142,7 +142,7 @@ function AccountInfoPage() {
     setLoading(true);
     try {
       const res = await fetch(
-        "https://airesumeproapi.onrender.com/api/update-account-info",
+        "http://localhost:5000/api/update-account-info",
         {
           method: "PUT",
           headers: {
@@ -183,7 +183,7 @@ function AccountInfoPage() {
     setLoading(true);
     try {
       const res = await fetch(
-        "https://airesumeproapi.onrender.com/api/delete-account",
+        "http://localhost:5000/api/delete-account",
         {
           method: "DELETE",
           headers: {

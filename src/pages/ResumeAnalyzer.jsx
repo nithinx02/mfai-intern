@@ -33,7 +33,7 @@ function ResumeAnalyzer() {
     setError("");
     try {
       const response = await fetch(
-        "https://airesumeproapi.onrender.com/api/analyze",
+        "http://localhost:5000/api/analyze",
         {
           method: "POST",
           headers: {

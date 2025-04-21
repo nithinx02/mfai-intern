@@ -53,7 +53,7 @@ const BasicInfo = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        "https://airesumeproapi.onrender.com/api/basic-info",
+        "http://localhost:5000/api/basic-info",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -78,7 +78,7 @@ const BasicInfo = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        "https://airesumeproapi.onrender.com/api/profile-picture",
+        "http://localhost:5000/api/profile-picture",
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -100,7 +100,7 @@ const BasicInfo = () => {
         const token = localStorage.getItem("token");
 
         const response = await axios.post(
-          "https://airesumeproapi.onrender.com/api/upload-profile-picture",
+          "http://localhost:5000/api/upload-profile-picture",
           formData,
           {
             headers: {
@@ -133,7 +133,7 @@ const BasicInfo = () => {
       const token = localStorage.getItem("token");
       const updatedField = { [editingField]: tempValue };
       const response = await axios.put(
-        "https://airesumeproapi.onrender.com/api/basic-info",
+        "http://localhost:5000/api/basic-info",
         updatedField,
         { headers: { Authorization: `Bearer ${token}` } }
       );

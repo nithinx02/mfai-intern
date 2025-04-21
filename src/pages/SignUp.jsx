@@ -25,7 +25,7 @@ function SignUp() {
     console.log(username, email, password);
     try {
       const response = await fetch(
-        "https://airesumeproapi.onrender.com/api/signup",
+        "http://localhost:5000/api/signup",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
