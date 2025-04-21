@@ -170,7 +170,21 @@ const ReportAnalysis = () => {
     return "text-red-400 border-red-400";
   };
 
-  if (error) return <div className="text-red-500">{error}</div>;
+  if (error) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-center text-red-500">
+          <p>Error: {error}</p>
+          <Button
+            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+            onClick={() => navigate("/analysisReport")}
+          >
+            
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen ">

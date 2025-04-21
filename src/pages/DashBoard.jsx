@@ -112,7 +112,7 @@ const Dashboard = () => {
             onClick={() => navigate("/")}
             className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-300"
           >
-           login again
+            login again
           </Button>
         </div>
       </div>
@@ -139,11 +139,11 @@ const Dashboard = () => {
         {/* Profile Card */}
         <div className="h-auto w-auto bg-white rounded-xl mt-10 flex flex-col shadow-[0px_0px_10px_0px_#bad5ee] max-sm:m-4">
           <div className="relative border-b-4 border-[#1170CD]">
-            <div className="w-24 h-24 object-cover rounded-xl mx-auto my-4 overflow-hidden max-sm:shadow-[]">
+            <div className="w-24 h-24 object-cover rounded-xl mx-auto my-4 overflow-hidden ">
               <img
                 src={profileImage}
                 alt="avatar"
-                className="w-full h-full object-cover rounded-xl"
+                className="w-full h-full object-cover rounded-full hover:rotate-12 transition-transform duration-300"
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src = avatar;

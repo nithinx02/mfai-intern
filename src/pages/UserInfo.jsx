@@ -176,7 +176,7 @@ const BasicInfo = () => {
                 className="hidden"
               />
               <label htmlFor="avatar-upload" className="cursor-pointer block">
-                <div className="w-32 h-32 object-cover rounded-full mx-auto my-4 bg-slate-50 shadow-2xl">
+                <div className="w-32 h-32 object-cover rounded-full mx-auto my-4 bg-slate-50 shadow-2xl hover:scale-95 border-[#1170CD] transition-all duration-300 ">
                   <img
                     src={userAvatar || nonProfile}
                     alt="avatar"
@@ -299,7 +299,7 @@ const BasicInfo = () => {
                             className="px-2 py-1 border border-gray-300 focus:outline-none rounded-md h-40 w-[600px] text-gray-500 placeholder:text-gray-400 placeholder:text-sm max-sm:w-[350px]"
                             rows={4}
                             placeholder="Write a brief summary of your professional background and career objectives (max 50 words)"
-                            maxLength={50}
+                            maxLength={30}
                           />
                         ) : key === "gender" ? (
                           <select
