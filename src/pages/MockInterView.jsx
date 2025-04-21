@@ -36,7 +36,7 @@ const MockInterview = () => {
         }
 
         const response = await fetch(
-          "http://localhost:5000/api/mockinterview",
+          "https://airesumeproapi.onrender.com/api/mockinterview",
           {
             method: "POST",
             headers: {
@@ -95,7 +95,7 @@ const MockInterview = () => {
     if (!validateAnswer()) {
       return;
     }
-    
+
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
@@ -136,7 +136,7 @@ const MockInterview = () => {
       const userEmail = decoded.email;
 
       const response = await fetch(
-        "http://localhost:5000/api/evaluate-answers",
+        "https://airesumeproapi.onrender.com/api/evaluate-answers",
         {
           method: "POST",
           headers: {
@@ -149,8 +149,8 @@ const MockInterview = () => {
             answers: Object.values(answers),
             expectedAnswers,
             jobRole,
-          
-            score
+
+            score,
           }),
         }
       );
@@ -226,51 +226,80 @@ const MockInterview = () => {
                 {evaluationResults.wrongCount}
               </p>
             </div>
-  
           </div>
 
           <div className="space-y-6">
             {questions.map((question, index) => {
               const userAnswer = answers[index] || "Not answered";
-              const isSkipped = userAnswer === "Skipped" || userAnswer === "Not answered";
+              const isSkipped =
+                userAnswer === "Skipped" || userAnswer === "Not answered";
               const evaluationText = evaluationResults.evaluation[index] || "";
-              
-              const isCorrect = !isSkipped && (
-                /correct/i.test(evaluationText) ||
-                (userAnswer.toLowerCase().includes(expectedAnswers[index].toLowerCase().split(' ')[0]) ||
-                expectedAnswers[index].toLowerCase().split(' ').some(word => 
-                    userAnswer.toLowerCase().includes(word)))
-              );
+
+              const isCorrect =
+                !isSkipped &&
+                (/true/i.test(evaluationText) ||
+                  userAnswer
+                    .toLowerCase()
+                    .includes(
+                      expectedAnswers[index].toLowerCase().split(" ")[0]
+                    ) ||
+                  expectedAnswers[index]
+                    .toLowerCase()
+                    .split(" ")
+                    .some((word) => userAnswer.toLowerCase().includes(word)));
 
               return (
-                <div key={index} className="border border-gray-200 rounded-lg p-4">
-                    <h3 className="text-xl font-semibold mb-2">
-                        Q{index + 1}: {question}
-                    </h3>
-                    <p className="mb-2">
-                        <strong>Your Answer:</strong> {userAnswer}
+                <div
+                  key={index}
+                  className="border border-gray-200 rounded-lg p-4"
+                >
+                  <h3 className="text-xl font-semibold mb-2">
+                    Q{index + 1}: {question}
+                  </h3>
+                  <p className="mb-2">
+                    <strong>Your Answer:</strong> {userAnswer}
+                  </p>
+                  <p className="mb-2">
+                    <strong>Expected Answer:</strong> {expectedAnswers[index]}
+                  </p>
+                  <div
+                    className={`p-3 rounded ${
+                      isSkipped
+                        ? "bg-gray-100"
+                        : isCorrect
+                        ? "bg-green-100"
+                        : "bg-red-100"
+                    }`}
+                  >
+                    <p
+                      className={
+                        isSkipped
+                          ? "text-gray-700"
+                          : isCorrect
+                          ? "text-green-700"
+                          : "text-red-700"
+                      }
+                    >
+                      <strong>
+                        {isSkipped
+                          ? "↻ Skipped"
+                          : isCorrect
+                          ? "✓ Correct"
+                          : "✗ Wrong"}
+                      </strong>
+                      {isCorrect && !/correct/i.test(evaluationText) && (
+                        <span className="ml-2 text-sm">
+                          (Accepted as correct)
+                        </span>
+                      )}
                     </p>
-                    <p className="mb-2">
-                        <strong>Expected Answer:</strong> {expectedAnswers[index]}
-                    </p>
-                    <div className={`p-3 rounded ${
-                        isSkipped ? "bg-gray-100" :
-                        isCorrect ? "bg-green-100" : "bg-red-100"
-                    }`}>
-                        <p className={isSkipped ? "text-gray-700" : 
-                                    isCorrect ? "text-green-700" : "text-red-700"}>
-                            <strong>
-                                {isSkipped ? "↻ Skipped" : 
-                                isCorrect ? "✓ Correct" : "✗ Wrong"}
-                            </strong>
-                            {isCorrect && !/correct/i.test(evaluationText) && (
-                                <span className="ml-2 text-sm">(Accepted as correct)</span>
-                            )}
-                        </p>
-                        {!isSkipped && (
-                            <p>{evaluationText.split('Evaluation:')[1]?.trim() || evaluationText}</p>
-                        )}
-                    </div>
+                    {!isSkipped && (
+                      <p>
+                        {evaluationText.split("Evaluation:")[1]?.trim() ||
+                          evaluationText}
+                      </p>
+                    )}
+                  </div>
                 </div>
               );
             })}

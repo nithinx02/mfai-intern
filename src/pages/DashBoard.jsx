@@ -32,18 +32,18 @@ const Dashboard = () => {
         // Fetch all data in parallel
         const [dashboardRes, basicInfoRes, profileImageRes] = await Promise.all(
           [
-            fetch("http://localhost:5000/api/dashboard", {
+            fetch("https://airesumeproapi.onrender.com/api/dashboard", {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
             }),
-            fetch("http://localhost:5000/api/basic-info", {
+            fetch("https://airesumeproapi.onrender.com/api/basic-info", {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
             }),
             fetch(
-              "http://localhost:5000/api/get-profile-picture",
+              "https://airesumeproapi.onrender.com/api/get-profile-picture",
               {
                 headers: {
                   Authorization: `Bearer ${token}`,

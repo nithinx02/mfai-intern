@@ -33,7 +33,7 @@ function ResumeAnalyzer() {
     setError("");
     try {
       const response = await fetch(
-        "http://localhost:5000/api/analyze",
+        "https://airesumeproapi.onrender.com/api/analyze",
         {
           method: "POST",
           headers: {
@@ -47,7 +47,9 @@ function ResumeAnalyzer() {
       console.log("API Full Response:", result);
 
       if (response.ok && result?.success && result?.data) {
-        navigate("/analysisReport", { state: { data: result.data, score: result.data.overallScore } });
+        navigate("/analysisReport", {
+          state: { data: result.data, score: result.data.overallScore },
+        });
       } else {
         setError(
           result?.message || "Failed to analyze resume. Please try again."
@@ -65,7 +67,15 @@ function ResumeAnalyzer() {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
       const fileExtension = selectedFile.name.split(".").pop().toLowerCase();
-      const allowedExtensions = ["pdf", "doc", "docx", "jpg", "jpeg", "png", "gif"];
+      const allowedExtensions = [
+        "pdf",
+        "doc",
+        "docx",
+        "jpg",
+        "jpeg",
+        "png",
+        "gif",
+      ];
 
       if (allowedExtensions.includes(fileExtension)) {
         setFile(selectedFile);

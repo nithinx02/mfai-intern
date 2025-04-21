@@ -23,7 +23,7 @@ function Login() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/login",
+        "https://airesumeproapi.onrender.com/api/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -88,7 +88,6 @@ function Login() {
             </div>
 
             <a href="http://localhost:5000/auth/google">Sign in with Google</a>
-
 
             <p className="text-center max-sm:text-xs text-gray-500">
               New to builder?

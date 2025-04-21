@@ -32,7 +32,7 @@ function AccountInfoPage() {
     setLoading(true);
     try {
       const res = await fetch(
-        "http://localhost:5000/api/account-info",
+        "https://airesumeproapi.onrender.com/api/account-info",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -60,7 +60,7 @@ function AccountInfoPage() {
     setLoading(true);
     try {
       const res = await fetch(
-        "http://localhost:5000/api/get-profile-picture",
+        "https://airesumeproapi.onrender.com/api/get-profile-picture",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -103,7 +103,7 @@ function AccountInfoPage() {
     setEditingField(null);
     setTempValue("");
   };
-// save the btn
+  // save the btn
   const handleSave = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -111,7 +111,7 @@ function AccountInfoPage() {
 
     try {
       const res = await fetch(
-        "http://localhost:5000/api/update-account-info",
+        "https://airesumeproapi.onrender.com/api/update-account-info",
         {
           method: "PUT",
           headers: {
@@ -136,13 +136,13 @@ function AccountInfoPage() {
       setLoading(false);
     }
   };
-// save the password
+  // save the password
   const confirmPasswordSave = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       const res = await fetch(
-        "http://localhost:5000/api/update-account-info",
+        "https://airesumeproapi.onrender.com/api/update-account-info",
         {
           method: "PUT",
           headers: {
@@ -178,12 +178,12 @@ function AccountInfoPage() {
       setLoading(false);
     }
   };
-// delete the account
+  // delete the account
   const handleDeleteAccount = async () => {
     setLoading(true);
     try {
       const res = await fetch(
-        "http://localhost:5000/api/delete-account",
+        "https://airesumeproapi.onrender.com/api/delete-account",
         {
           method: "DELETE",
           headers: {

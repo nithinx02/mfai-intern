@@ -124,7 +124,7 @@ const ReportAnalysis = () => {
       navigate("/resume-analyzer");
     }
   }, [apiData, navigate]);
-//  suggestions of jobs
+  //  suggestions of jobs
   const fetchJobSuggestions = async () => {
     setLoadingSuggestions(true);
     try {
@@ -135,7 +135,7 @@ const ReportAnalysis = () => {
       }
 
       const response = await fetch(
-        "http://localhost:5000/api/job-suggestions",
+        "https://airesumeproapi.onrender.com/api/job-suggestions",
         {
           method: "POST",
           headers: {

@@ -48,12 +48,12 @@ const BasicInfo = () => {
       document.body.style.overflow = "unset";
     }
   }, [isopen]);
-// user info...
+  // user info...
   const fetchBasicInfo = async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        "http://localhost:5000/api/basic-info",
+        "https://airesumeproapi.onrender.com/api/basic-info",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -73,12 +73,12 @@ const BasicInfo = () => {
       setLoading(false);
     }
   };
-// profile picture...
+  // profile picture...
   const fetchProfilePicture = async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        "http://localhost:5000/api/profile-picture",
+        "https://airesumeproapi.onrender.com/api/profile-picture",
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -89,7 +89,7 @@ const BasicInfo = () => {
       console.error("Error fetching profile picture:", error);
     }
   };
-// uploading profile picture...
+  // uploading profile picture...
   const handleImageChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -100,7 +100,7 @@ const BasicInfo = () => {
         const token = localStorage.getItem("token");
 
         const response = await axios.post(
-          "http://localhost:5000/api/upload-profile-picture",
+          "https://airesumeproapi.onrender.com/api/upload-profile-picture",
           formData,
           {
             headers: {
@@ -133,7 +133,7 @@ const BasicInfo = () => {
       const token = localStorage.getItem("token");
       const updatedField = { [editingField]: tempValue };
       const response = await axios.put(
-        "http://localhost:5000/api/basic-info",
+        "https://airesumeproapi.onrender.com/api/basic-info",
         updatedField,
         { headers: { Authorization: `Bearer ${token}` } }
       );
