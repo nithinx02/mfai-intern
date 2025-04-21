@@ -3,6 +3,7 @@ import NavBar from "../components/NavBar";
 import Button from "../components/Button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import Loading from "../components/Loading";
 
 const MockInterview = () => {
   const navigate = useNavigate();
@@ -178,12 +179,7 @@ const MockInterview = () => {
   if (loading && questions.length === 0) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="spinner-border text-blue-500" role="status">
-            <span className="sr-only">Loading...</span>
-          </div>
-          <p className="mt-3">Preparing your mock interview questions...</p>
-        </div>
+        <Loading />
       </div>
     );
   }
@@ -208,23 +204,41 @@ const MockInterview = () => {
     return (
       <div className="h-screen">
         <NavBar />
-        <div className="p-6 max-w-6xl m-auto">
-          <h1 className="text-3xl font-bold text-center mb-8">
-            Interview Results
-          </h1>
-
-          <div className="grid grid-cols-3 gap-4 mb-8">
-            <div className="bg-green-100 p-4 rounded-lg text-center">
-              <h3 className="text-xl font-semibold">Correct Answers</h3>
-              <p className="text-4xl font-bold text-green-600">
-                {evaluationResults.correctCount}
+        <div className="p-6 max-w-6xl m-auto flex flex-col justify-center my-auto gap-4">
+          <div className="shadow-md p-4 rounded-xl ">
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-3xl font-bold text-center max-md:text-2xl">
+                Interview Results
+              </h1>
+              <p className="text-center font-semibold text-xl bg-[#1170CD] text-white px-4 py-2 rounded-md max-md:text-sm">
+                Total Questions: {questions.length}
               </p>
             </div>
-            <div className="bg-red-100 p-4 rounded-lg text-center">
-              <h3 className="text-xl font-semibold">Wrong Answers</h3>
-              <p className="text-4xl font-bold text-red-600">
-                {evaluationResults.wrongCount}
-              </p>
+
+            <div className="grid grid-cols-3 gap-4 mb-8 max-md:grid-cols-2 max-md:mb-0 ">
+              <div className="bg-green-100 p-4 rounded-lg text-center">
+                <h3 className="text-xl font-semibold">Correct Answers</h3>
+                <p className="text-4xl font-bold text-green-600">
+                  {evaluationResults.correctCount}
+                </p>
+              </div>
+              <div className="bg-red-100 p-4 rounded-lg text-center">
+                <h3 className="text-xl font-semibold">Wrong Answers</h3>
+                <p className="text-4xl font-bold text-red-600">
+                  {evaluationResults.wrongCount}
+                </p>
+              </div>
+
+              <div className="bg-blue-100 p-4 rounded-lg text-center">
+                <h3 className="text-xl font-semibold">Score Percentage</h3>
+                <p className="text-4xl font-bold text-blue-600">
+                  {(
+                    (evaluationResults.correctCount / questions.length) *
+                    100
+                  ).toFixed(0)}
+                  %
+                </p>
+              </div>
             </div>
           </div>
 
@@ -305,7 +319,7 @@ const MockInterview = () => {
             })}
           </div>
 
-          <div className="mt-8 flex justify-center gap-4">
+          {/* <div className="mt-8 flex justify-center gap-4">
             <Button
               className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600"
               onClick={() => navigate("/dashboard")}
@@ -318,7 +332,7 @@ const MockInterview = () => {
             >
               Try Another Interview
             </Button>
-          </div>
+          </div> */}
         </div>
       </div>
     );

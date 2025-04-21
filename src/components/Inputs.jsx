@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 function Inputs({
   children,
   email,
@@ -8,6 +8,7 @@ function Inputs({
   name,
   setName,
 }) {
+  const [error, setError] = useState("");
   const label = children;
   const inputType =
     label === "Password" ? "password" : label === "Email" ? "email" : "text";
@@ -17,9 +18,18 @@ function Inputs({
 
   const handleChange = (e) => {
     const value = e.target.value;
-    if (label === "Email") setEmail(value);
-    else if (label === "Password") setPassword(value);
-    else if (label === "Username") setName(value);
+    if (label === "Email") {
+      setEmail(value);
+    } else if (label === "Password") {
+      if (value.length < 8) {
+        setError("Password must be at least 8 characters long");
+      } else {
+        setError("");
+      }
+      setPassword(value);
+    } else if (label === "Username") {
+      setName(value);
+    }
   };
 
   const autoComplete =
@@ -37,6 +47,7 @@ function Inputs({
         type={inputType}
         autoComplete={autoComplete}
         required
+        minLength={label === "Password" ? 8 : undefined}
         value={inputValue}
         onChange={handleChange}
         className="peer border-b border-gray-300 outline-none w-full text-gray-700 bg-transparent focus:ring-0 focus:border-blue-500"
@@ -51,6 +62,9 @@ function Inputs({
       >
         {label}
       </label>
+      {label === "Password" && error && (
+        <p className="text-red-500 text-xs mt-1">{error}</p>
+      )}
     </div>
   );
 }
