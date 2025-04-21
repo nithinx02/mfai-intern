@@ -5,7 +5,11 @@ import NavBar from "../components/NavBar";
 import Button from "../components/Button";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBars,
+  faCircleExclamation,
+  faCircleCheck,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
@@ -14,11 +18,10 @@ import axios from "axios";
 
 const BasicInfo = () => {
   const [loading, setLoading] = useState(true);
-  const [userAvatar, setUserAvatar] = useState(avatar);
+  const [userAvatar, setUserAvatar] = useState(nonProfile);
   const location = useLocation();
   const [isopen, setIsOpen] = useState(false);
   const [activeButton, setActiveButton] = useState(location.pathname);
-  const navigate = useNavigate();
   const [user, setUser] = useState({
     username: "",
     email: "",
@@ -157,7 +160,7 @@ const BasicInfo = () => {
   return (
     <div className="h-screen">
       <NavBar />
-      <div className="max-sm:p-4  h-screen ">
+      <div className="max-sm:p-4 h-[calc(90vh-75px)]">
         <div
           className="max-w-6xl mx-auto  p-6 rounded-xl  grid grid-cols-[200px_auto] gap-10 my-14  max-sm:grid-cols-1"
           style={{ boxShadow: "rgba(100, 100, 111, 0.4) 0px 7px 29px 0px" }}
@@ -176,8 +179,8 @@ const BasicInfo = () => {
                 <div className="w-32 h-32 object-cover rounded-full mx-auto my-4 bg-slate-50 shadow-2xl">
                   <img
                     src={userAvatar || nonProfile}
-                    alt="Profile"
-                    className="w-full h-full object-cover rounded-full "
+                    alt="avatar"
+                    className="w-full h-full object-cover rounded-full"
                     onError={(e) => {
                       e.target.src = nonProfile;
                     }}
@@ -231,19 +234,33 @@ const BasicInfo = () => {
 
             {message && (
               <div
-                className={`mb-4 p-2 rounded-md ${
+                className={`my-4 p-4 rounded-md flex items-center gap-3 shadow-sm ${
                   message.includes("success")
                     ? "bg-green-100 text-green-800"
                     : "bg-red-100 text-red-800"
                 }`}
               >
-                {message}
+                {message.includes("success") ? (
+                  <FontAwesomeIcon
+                    icon={faCircleExclamation}
+                    className="text-green-600 text-xl animate-bounce"
+                  />
+                ) : (
+                  <FontAwesomeIcon
+                    icon={faCircleCheck}
+                    className="text-red-600 text-xl animate-bounce"
+                  />
+                )}
+                <span className="text-sm font-medium">{message}</span>
               </div>
             )}
 
             <form onSubmit={handleSave}>
               {Object.keys(user)
-                .filter((key) => !["profilePicture"].includes(key))
+                .filter(
+                  (key) =>
+                    !["profilePicture", "email", "phoneNumber"].includes(key)
+                )
                 .map((key) => (
                   <div
                     key={key}
@@ -279,9 +296,10 @@ const BasicInfo = () => {
                           <textarea
                             value={tempValue}
                             onChange={(e) => setTempValue(e.target.value)}
-                            className="px-2 py-1 border border-gray-300 focus:outline-none rounded-md h-40  w-[600px] text-gray-500 placeholder:text-gray-400  placeholder:text-sm max-sm:w-[350px] "
+                            className="px-2 py-1 border border-gray-300 focus:outline-none rounded-md h-40 w-[600px] text-gray-500 placeholder:text-gray-400 placeholder:text-sm max-sm:w-[350px]"
                             rows={4}
-                            placeholder="'The only way to do great work is to love what you do...'"
+                            placeholder="Write a brief summary of your professional background and career objectives (max 50 words)"
+                            maxLength={50}
                           />
                         ) : key === "gender" ? (
                           <select

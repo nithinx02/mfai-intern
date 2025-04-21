@@ -9,7 +9,6 @@ const MockInterview = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { resumeText, jobRole, difficulty, score } = location.state || {};
-
   const [showExitPopup, setShowExitPopup] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [expectedAnswers, setExpectedAnswers] = useState([]);

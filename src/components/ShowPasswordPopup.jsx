@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import Button from "./Button";
 
 function ShowPasswordPopup({
-  setTempValue,
+  setTempValues,
   setShowPasswordPopup,
   showPasswordPopup,
   confirmPasswordSave,
   setEditingField,
+
 }) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -17,7 +18,7 @@ function ShowPasswordPopup({
       alert("New passwords don't match!");
       return;
     }
-    setTempValue(newPassword);
+    setTempValues(newPassword);
     confirmPasswordSave(e);
   };
 

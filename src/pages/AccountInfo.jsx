@@ -14,7 +14,7 @@ import Loading from "../components/Loading";
 function AccountInfoPage() {
   const [info, setInfo] = useState({});
   const [editingField, setEditingField] = useState(null);
-  const [tempValue, setTempValue] = useState("");
+  const [tempValues, setTempValues] = useState({});
   const [userAvatar, setUserAvatar] = useState(avatar);
   const [activeButton, setActiveButton] = useState("basicinfo");
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
@@ -27,7 +27,6 @@ function AccountInfoPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Fetch user data
   const fetchAccountInfo = async () => {
     setLoading(true);
     try {
@@ -44,9 +43,7 @@ function AccountInfoPage() {
       if (userData && userData._id) {
         delete userData._id;
       }
-      setInfo({ ...userData, password: "*****" });
-
-      // Fetch profile picture separately
+      setInfo({ ...userData, password: "********" });
       fetchProfilePicture();
     } catch (err) {
       console.error("Error fetching account info:", err);
@@ -55,7 +52,6 @@ function AccountInfoPage() {
     }
   };
 
-  // Fetch profile picture
   const fetchProfilePicture = async () => {
     setLoading(true);
     try {
@@ -93,22 +89,23 @@ function AccountInfoPage() {
 
   const handleEdit = (field) => {
     setEditingField(field);
-    setTempValue(info[field] || "");
+    setTempValues((prev) => ({ ...prev, [field]: info[field] || "" }));
     if (field === "password") {
       setShowPasswordPopup(true);
     }
   };
 
   const handleCancel = () => {
-    setEditingField(null);
-    setTempValue("");
+    setShowPasswordPopup(false);
+    setEditingField({});
+    setTempValues({});
   };
-  // save the btn
+
   const handleSave = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    const updatedInfo = { ...info, [editingField]: tempValue };
+    if (!editingField) return;
 
+    setLoading(true);
     try {
       const res = await fetch(
         "https://airesumeproapi.onrender.com/api/update-account-info",
@@ -118,15 +115,18 @@ function AccountInfoPage() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({ [editingField]: tempValue }),
+          body: JSON.stringify({ [editingField]: tempValues[editingField] }),
         }
       );
 
       const data = await res.json();
       if (res.ok) {
-        setInfo(updatedInfo);
+        setInfo((prev) => ({
+          ...prev,
+          [editingField]: tempValues[editingField],
+        }));
         setEditingField(null);
-        setTempValue("");
+        setTempValues({});
       } else {
         console.error("Update failed:", data);
       }
@@ -136,9 +136,14 @@ function AccountInfoPage() {
       setLoading(false);
     }
   };
-  // save the password
+
   const confirmPasswordSave = async (e) => {
     e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      alert("Passwords don't match!");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch(
@@ -150,25 +155,23 @@ function AccountInfoPage() {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify({
-            currentPassword: currentPassword,
-            newPassword: tempValue,
+            currentPassword,
+            newPassword,
           }),
         }
       );
 
       const data = await res.json();
-
       if (res.ok) {
         setInfo((prev) => ({ ...prev, password: "********" }));
         setEditingField(null);
         setShowPasswordPopup(false);
-        setTempValue("");
+        setTempValues({});
         setCurrentPassword("");
         setNewPassword("");
         setConfirmPassword("");
         alert("Password updated successfully!");
       } else {
-        console.error("Password update failed:", data);
         alert(data.error || "Failed to update password");
       }
     } catch (err) {
@@ -178,8 +181,11 @@ function AccountInfoPage() {
       setLoading(false);
     }
   };
-  // delete the account
+
   const handleDeleteAccount = async () => {
+    if (!window.confirm("Are you sure you want to delete your account?"))
+      return;
+
     setLoading(true);
     try {
       const res = await fetch(
@@ -197,8 +203,7 @@ function AccountInfoPage() {
         navigate("/");
       } else {
         const data = await res.json();
-        console.error("Account deletion failed:", data.error);
-        alert("Failed to delete account. Please try again.");
+        alert("Failed to delete account: " + (data.error || "Unknown error"));
       }
     } catch (err) {
       console.error("Error deleting account:", err);
@@ -207,7 +212,6 @@ function AccountInfoPage() {
       setLoading(false);
     }
   };
-  // logout the account
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -217,8 +221,9 @@ function AccountInfoPage() {
   if (loading) {
     return <Loading />;
   }
+
   return (
-    <div className="h-screen ">
+    <div className="h-screen">
       <NavBar />
       <div className="h-[calc(100vh-75px)] p-6 max-sm:p-2">
         <div
@@ -271,15 +276,13 @@ function AccountInfoPage() {
 
           {/* Main Content */}
           <div className="space-y-2 mt-6">
-            <div className="max-sm:flex gap-4 items-center  my-4">
+            <div className="max-sm:flex gap-4 items-center my-4">
               <div className="hidden max-sm:block">
-                {
-                  <FontAwesomeIcon
-                    icon={faBars}
-                    className="w-10 h-10 block max-sm:w-6 max-sm:h-6 text-[#1170CD]"
-                    onClick={() => setIsOpen(true)}
-                  />
-                }
+                <FontAwesomeIcon
+                  icon={faBars}
+                  className="w-10 h-10 block max-sm:w-6 max-sm:h-6 text-[#1170CD]"
+                  onClick={() => setIsOpen(true)}
+                />
               </div>
               <h2 className="text-4xl font-bold max-sm:text-2xl">
                 Account Info
@@ -294,14 +297,11 @@ function AccountInfoPage() {
                 >
                   <div className="flex justify-between max-sm:w-full">
                     <p className="capitalize font-medium text-xl">{key}:</p>
-                    <div
-                      className="mt-2 hidden max-sm:block
-                    "
-                    >
+                    <div className="mt-2 hidden max-sm:block">
                       <button
                         type="button"
                         onClick={() =>
-                          editingField === key ? handleSave() : handleEdit(key)
+                          editingField === key ? handleSave : handleEdit(key)
                         }
                         className="text-blue-500 hover:underline"
                       >
@@ -314,8 +314,13 @@ function AccountInfoPage() {
                     <div className="flex flex-col gap-2 max-sm:w-[80%]">
                       <input
                         type="text"
-                        value={tempValue}
-                        onChange={(e) => setTempValue(e.target.value)}
+                        value={tempValues[key] || ""}
+                        onChange={(e) =>
+                          setTempValues((prev) => ({
+                            ...prev,
+                            [key]: e.target.value,
+                          }))
+                        }
                         className="px-2 py-1 flex-1 border-b"
                       />
                       <div className="flex justify-start mt-1 gap-2">
@@ -334,7 +339,7 @@ function AccountInfoPage() {
                   ) : (
                     <p className="text-gray-950 font-semibold flex-grow max-sm:w-full">
                       {key === "password"
-                        ? "*".repeat(tempValue.length || 8)
+                        ? "*".repeat(info.password?.length || 8)
                         : info[key]}
                     </p>
                   )}
@@ -344,7 +349,7 @@ function AccountInfoPage() {
                       <button
                         type="button"
                         onClick={() =>
-                          editingField === key ? handleSave() : handleEdit(key)
+                          editingField === key ? handleSave : handleEdit(key)
                         }
                         className="text-blue-500 hover:underline"
                       >
@@ -357,10 +362,7 @@ function AccountInfoPage() {
                       {editingField !== "password" ? (
                         <button
                           type="button"
-                          onClick={() => {
-                            handleEdit("password");
-                            setShowPasswordPopup(true); // Show the password popup
-                          }}
+                          onClick={() => handleEdit("password")}
                           className="text-blue-500 hover:underline max-sm:hidden"
                         >
                           Edit
@@ -370,25 +372,27 @@ function AccountInfoPage() {
                           <input
                             type="password"
                             placeholder="Enter new password"
-                            value={tempValue}
-                            onChange={(e) => setTempValue(e.target.value)}
+                            value={tempValues.password || ""}
+                            onChange={(e) =>
+                              setTempValues((prev) => ({
+                                ...prev,
+                                password: e.target.value,
+                              }))
+                            }
                             className="px-2 py-1 border border-gray-300 rounded-md"
                           />
                           <div className="flex gap-2">
                             <Button
                               type="button"
-                              onClick={confirmPasswordSave}
+                              // onClick={() => setShowPasswordPopup(true)}
                               className="!p-2"
                             >
                               Save
                             </Button>
                             <button
                               type="button"
-                              onClick={() => {
-                                setEditingField(null);
-                                setTempValue("");
-                              }}
-                              className="!p-2 bg-gray-300 !text-black  rounded-md"
+                              onClick={handleCancel}
+                              className="!p-2 bg-gray-300 !text-black rounded-md"
                             >
                               Cancel
                             </button>
@@ -474,20 +478,17 @@ function AccountInfoPage() {
         </div>
       </div>
 
-      {/* Password popup */}
       <ShowPasswordPopup
-        setTempValue={setTempValue}
-        setShowPasswordPopup={setShowPasswordPopup}
         showPasswordPopup={showPasswordPopup}
-        confirmPasswordSave={confirmPasswordSave}
-        tempValue={tempValue}
-        setEditingField={setEditingField}
+        setShowPasswordPopup={setShowPasswordPopup}
         currentPassword={currentPassword}
         setCurrentPassword={setCurrentPassword}
-        newPassword={newPassword}
+        confirmPasswordSave={confirmPasswordSave}
         setNewPassword={setNewPassword}
         confirmPassword={confirmPassword}
         setConfirmPassword={setConfirmPassword}
+        setEditingField={setEditingField}
+        setTempValues={setTempValues}
       />
     </div>
   );

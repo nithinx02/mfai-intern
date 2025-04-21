@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import {
   faLocationDot,
   faUser,
   faPhone,
   faEnvelope,
+  faCircleNotch,
+  faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import { faLinkedin, faGithub } from "@fortawesome/free-brands-svg-icons";
 import Button from "../components/Button";
@@ -93,14 +96,39 @@ const Dashboard = () => {
   if (loading) return <Loading />;
   if (error)
     return (
-      <div className="flex justify-center items-center h-screen text-red-500">
-        {error}
+      <div className="flex justify-center items-center h-screen ">
+        <div className="text-center p-8  bg-white  transition-all duration-300 max-w-md ">
+          <div className="flex justify-center items-center mb-4">
+            <FontAwesomeIcon
+              icon={faTriangleExclamation}
+              className="text-5xl text-red-500 animate-bounce"
+            />
+          </div>
+          <p className="text-gray-800 font-semibold text-lg mb-2">
+            An error occurred
+          </p>
+          <p className="text-red-500 text-sm mb-6">{error}</p>
+          <Button
+            onClick={() => navigate("/")}
+            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-300"
+          >
+           login again
+          </Button>
+        </div>
       </div>
     );
   if (!userInfo)
     return (
-      <div className="flex items-center gap-2 justify-center h-screen">
-        <p className="text-sm font-medium">User information not available</p>
+      <div className="flex items-center gap-4 justify-center h-screen">
+        <FontAwesomeIcon
+          icon={faCircleNotch}
+          className="text-4xl text-red-500 animate-pulse"
+        />{" "}
+        {/* Font Awesome icon */}
+        <p className="text-lg font-medium text-gray-700">
+          We are unable to retrieve your user information at this time. Please
+          try again later.
+        </p>
       </div>
     );
 

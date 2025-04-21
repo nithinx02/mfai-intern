@@ -176,9 +176,8 @@ const ReportAnalysis = () => {
     <div className="h-screen ">
       <NavBar />
       <div
-        className={`p-6 max-w-6xl m-auto max-sm:p-4 mt-0 h-[calc(100vh-75px)] ${
-          openSection ? "mt-20" : ""
-        }`}
+        className={`p-6 max-w-6xl m-auto max-sm:p-4 mt-0 h-[calc(100vh-75px)] 
+        `}
       >
         <div className="bg-white shadow-[0px_5px_20px_-3px_rgba(0,0,0,0.2)] rounded-xl p-6 max-sm:shadow-none max-sm:p-4 mb-8">
           <div className="flex gap-16 items-center max-sm:flex-col">
